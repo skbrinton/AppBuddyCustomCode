@@ -1,0 +1,140 @@
+/******************
+***  3 LEVEL OBJECTS  ***
+
+CSS code to beutify grids when we apply '3 level left control JS' file.
+To format 3rd level grid
+
+******************/
+
+
+body {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+#gbMainTable .lastCol{
+    vertical-align: middle;
+}
+
+.gridBtns.top {
+    box-sizing: border-box;
+}
+
+#gbMainTable .showDataCard{
+    display: inline-block;
+    vertical-align: top;
+    padding: 0px 3px;
+    cursor: pointer;
+}
+
+#gbMainTable .dataCard{
+    border-right: 1px solid #D4DADC;
+    border-left: 1px solid #D4DADC;
+}
+
+#gbMainTable .dataCardCell{
+    border-left: none !important;
+    border-right: 1px solid #D4DADC!important;
+    padding: 0;
+}
+
+#gbMainTable .dataCard .cardTable{
+    display: table;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+#gbMainTable .dataCard .cardRow {
+    display: table-row;
+}
+
+#gbMainTable .dataCard .cardItem{
+    vertical-align: middle;
+    display: table-cell;
+    border-left: none;
+    border-top: none;
+    padding: 6px 9px;
+    box-sizing: border-box;
+    min-height: 46px;
+    text-align: left;
+}
+
+#gbMainTable .dataCard .cardItem label{
+    position: relative;
+    top: 4px;
+    padding-right: 4px;
+    display: inline-block;
+    font-weight: bold;
+    width: 40%;
+    word-break: break-word;
+}
+
+#gbMainTable .dataCardExpanded td{
+    background-color: #f4f7f8!important; /* highlight data card and parent row when they're expanded */
+}
+
+#gbMainTable .dataCard .cardItem input[type="text"]{
+    width: 135px;
+}
+
+#gbMainTable .dataCard .cardItem textarea{
+    vertical-align: top;
+}
+
+#gbMainTable .dataCard .cardItem .ui-widget{
+    display: inline-block;
+}
+
+#gbMainTable .nr td.dataCardCell {
+    border-right: 1px solid #D4DADC!important;
+}
+
+
+.mainTable .cardItem.mod{
+    background-color: #FFF0D9!important;
+}
+/**
+**  OVERRIDES
+**/
+
+#gbMainTable .dataCard .chkd, #gbMainTable .dataCard .unchkd, #gbMainTable .dataCard .lookupData .chkd, #gbMainTable .dataCard .lookupData .unchkd{
+    float: none;
+}
+
+/* background-colors. apply to individual cells and every cell in a row. we have different namespace selectors for cells and rows so that the cell rules will be applied over the row rules.*/
+#gbMainTable .cardItem[class*="gb-cf-bgColor-1"], .mainTable .dataCardCell[class*="gb-cf-bgColor-1"] .cardItem{background-color:#EF3636 !important;}
+#gbMainTable .cardItem[class*="gb-cf-bgColor-2"], .mainTable .dataCardCell[class*="gb-cf-bgColor-2"] .cardItem{background-color:#FAA639 !important;}
+#gbMainTable .cardItem[class*="gb-cf-bgColor-3"], .mainTable .dataCardCell[class*="gb-cf-bgColor-3"] .cardItem{background-color:#FBF277 !important;}
+#gbMainTable .cardItem[class*="gb-cf-bgColor-4"], .mainTable .dataCardCell[class*="gb-cf-bgColor-4"] .cardItem{background-color:#82C065 !important;}
+#gbMainTable .cardItem[class*="gb-cf-bgColor-5"], .mainTable .dataCardCell[class*="gb-cf-bgColor-5"] .cardItem{background-color:#6FD4E3 !important;}
+#gbMainTable .cardItem[class*="gb-cf-bgColor-6"], .mainTable .dataCardCell[class*="gb-cf-bgColor-6"] .cardItem{background-color:#A383D8 !important;}
+#gbMainTable .cardItem[class*="gb-cf-bgColor-7"], .mainTable .dataCardCell[class*="gb-cf-bgColor-7"] .cardItem{background-color:#6d9eeb !important;}
+#gbMainTable .cardItem[class*="gb-cf-bgColor-8"], .mainTable .dataCardCell[class*="gb-cf-bgColor-8"] .cardItem{background-color:#cfe2f3 !important;}
+#gbMainTable .cardItem[class*="gb-cf-bgColor-9"], .mainTable .dataCardCell[class*="gb-cf-bgColor-9"] .cardItem{background-color:#76a5af !important;}
+#gbMainTable .cardItem[class*="gb-cf-bgColor-10"], .mainTable .dataCardCell[class*="gb-cf-bgColor-10"] .cardItem{background-color:#d9d9d9 !important;}
+
+/* text colors.  apply to individual cells and every cell in a row. Also apply to input, select and textarea fields in a cell. We set the background position on select elements so that the dropdown color will take affect, otherwise it won't work. */
+#gbMainTable .cardItem[class*="gb-cf-txtColor-1"], #gbMainTable .cardItem[class*="gb-cf-txtColor-1"] input, #gbMainTable .cardItem[class*="gb-cf-txtColor-1"] textarea, .mainTable .dataCardCell[class*="gb-cf-txtColor-1"] .cardItem, .mainTable .dataCardCell[class*="gb-cf-txtColor-1"] .cardItem input, .mainTable .dataCardCell[class*="gb-cf-txtColor-1"] .cardItem textarea{color:#cc0000 !important;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-1"] select, .mainTable .dataCardCell[class*="gb-cf-txtColor-1"] .cardItem select {color:#cc0000 !important; background-position: inherit;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-2"], #gbMainTable .cardItem[class*="gb-cf-txtColor-2"] input, #gbMainTable .cardItem[class*="gb-cf-txtColor-2"] textarea, .mainTable .dataCardCell[class*="gb-cf-txtColor-2"] .cardItem, .mainTable .dataCardCell[class*="gb-cf-txtColor-2"] .cardItem input, .mainTable .dataCardCell[class*="gb-cf-txtColor-2"] .cardItem textarea{color:#ffa300 !important;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-2"] select, .mainTable .dataCardCell[class*="gb-cf-txtColor-2"] .cardItem select{color:#ffa300 !important; background-position: inherit;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-3"], #gbMainTable .cardItem[class*="gb-cf-txtColor-3"] input, #gbMainTable .cardItem[class*="gb-cf-txtColor-3"] textarea, .mainTable .dataCardCell[class*="gb-cf-txtColor-3"] .cardItem, .mainTable .dataCardCell[class*="gb-cf-txtColor-3"] .cardItem input, .mainTable .dataCardCell[class*="gb-cf-txtColor-3"] .cardItem textarea{color:#0b8043 !important;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-3"] select, .mainTable .dataCardCell[class*="gb-cf-txtColor-3"] .cardItem select{color:#0b8043 !important; background-position: inherit;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-4"], #gbMainTable .cardItem[class*="gb-cf-txtColor-4"] input, #gbMainTable .cardItem[class*="gb-cf-txtColor-4"] textarea, .mainTable .dataCardCell[class*="gb-cf-txtColor-4"] .cardItem, .mainTable .dataCardCell[class*="gb-cf-txtColor-4"] .cardItem input, .mainTable .dataCardCell[class*="gb-cf-txtColor-4"] .cardItem textarea{color:#1155cc !important;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-4"] select, .mainTable .dataCardCell[class*="gb-cf-txtColor-4"] .cardItem select{color:#1155cc !important; background-position: inherit;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-5"], #gbMainTable .cardItem[class*="gb-cf-txtColor-5"] input, #gbMainTable .cardItem[class*="gb-cf-txtColor-5"] textarea, .mainTable .dataCardCell[class*="gb-cf-txtColor-5"] .cardItem, .mainTable .dataCardCell[class*="gb-cf-txtColor-5"] .cardItem input, .mainTable .dataCardCell[class*="gb-cf-txtColor-5"] .cardItem textarea{color:#6d9eeb !important;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-5"] select, .mainTable .dataCardCell[class*="gb-cf-txtColor-5"] .cardItem select{color:#6d9eeb !important; background-position: inherit;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-6"], #gbMainTable .cardItem[class*="gb-cf-txtColor-6"] input, #gbMainTable .cardItem[class*="gb-cf-txtColor-6"] textarea, .mainTable .dataCardCell[class*="gb-cf-txtColor-6"] .cardItem, .mainTable .dataCardCell[class*="gb-cf-txtColor-6"] .cardItem input, .mainTable .dataCardCell[class*="gb-cf-txtColor-6"] .cardItem textarea{color:#674ea7 !important;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-6"] select, .mainTable .dataCardCell[class*="gb-cf-txtColor-6"] .cardItem select{color:#674ea7 !important; background-position: inherit;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-7"], #gbMainTable .cardItem[class*="gb-cf-txtColor-7"] input, #gbMainTable .cardItem[class*="gb-cf-txtColor-7"] textarea, .mainTable .dataCardCell[class*="gb-cf-txtColor-7"] .cardItem, .mainTable .dataCardCell[class*="gb-cf-txtColor-7"] .cardItem input, .mainTable .dataCardCell[class*="gb-cf-txtColor-7"] .cardItem textarea{color:#6d9eeb !important;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-7"] select, .mainTable .dataCardCell[class*="gb-cf-txtColor-7"] .cardItem select{color:#6d9eeb !important; background-position: inherit;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-8"], #gbMainTable .cardItem[class*="gb-cf-txtColor-8"] input, #gbMainTable .cardItem[class*="gb-cf-txtColor-8"] textarea, .mainTable .dataCardCell[class*="gb-cf-txtColor-8"] .cardItem, .mainTable .dataCardCell[class*="gb-cf-txtColor-8"] .cardItem input, .mainTable .dataCardCell[class*="gb-cf-txtColor-8"] .cardItem textarea{color:#cfe2f3 !important;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-8"] select, .mainTable .dataCardCell[class*="gb-cf-txtColor-8"] .cardItem select{color:#cfe2f3 !important; background-position: inherit;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-9"], #gbMainTable .cardItem[class*="gb-cf-txtColor-9"] input, #gbMainTable .cardItem[class*="gb-cf-txtColor-9"] textarea, .mainTable .dataCardCell[class*="gb-cf-txtColor-9"] .cardItem, .mainTable .dataCardCell[class*="gb-cf-txtColor-9"] .cardItem input, .mainTable .dataCardCell[class*="gb-cf-txtColor-9"] .cardItem textarea{color:#ffe599 !important;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-9"] select, .mainTable .dataCardCell[class*="gb-cf-txtColor-9"] .cardItem select{color:#ffe599 !important; background-position: inherit;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-10"], #gbMainTable .cardItem[class*="gb-cf-txtColor-10"] input, #gbMainTable .cardItem[class*="gb-cf-txtColor-10"] textarea, .mainTable .dataCardCell[class*="gb-cf-txtColor-10"] .cardItem, .mainTable .dataCardCell[class*="gb-cf-txtColor-10"] .cardItem input, .mainTable .dataCardCell[class*="gb-cf-txtColor-10"] .cardItem textarea{color:#d9d9d9 !important;}
+#gbMainTable .cardItem[class*="gb-cf-txtColor-10"] select, .mainTable .dataCardCell[class*="gb-cf-txtColor-10"] .cardItem select{color:#d9d9d9 !important; background-position: inherit;}
+
+/* bold, italic, underline */
+#gbMainTable .cardItem[class*="gb-cf-bold"], .mainTable .dataCardCell[class*="gb-cf-bold"] .cardItem {font-weight:bold;}
+#gbMainTable .cardItem[class*="gb-cf-italic"], .mainTable .dataCardCell[class*="gb-cf-italic"] .cardItem {font-style: italic;}
+#gbMainTable .cardItem[class*="gb-cf-underline"], .mainTable .dataCardCell[class*="gb-cf-underline"] .cardItem {text-decoration: underline;}
