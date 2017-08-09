@@ -1,0 +1,66 @@
+/********# AppBuddyCustomCode ************
+
+These are the custom JavaScript and CSS code files for most frequently used Grid customization use cases.
+This file contains custom CS code to hide grid elements displayed on the screen like - Grid name/Custom Buttons/ Information Panel Icon, 
+When client requests to hide element not present in the code below, follow steps = 
+1. Right click on the element on screen
+2. Select - 'Inspect'
+3. Find 'ClassName' or 'Id' (Whichever is unique)
+4. e.g. .ClassName {display:none !important;}      OR    #ID{display:none !important;}
+
+******************************************/
+
+/* Hide the Grid header row */
+.gridHeaderCell {display:none !important;}
+
+/* hide view and open record detail actions */
+.a-open, .a-open-same-win {display:none !important;}
+
+/* Hide Clone record detail action */
+.a-clone {display:none !important;}
+
+/* Hide Apply to all records inside Mass Update widget */
+#massUpdateAll {display:none !important;}
+
+/* Hide "Mass update-apply all" within user defined filter gear icon */
+.muApplyAll {display:none !important;}
+
+/* hide Read only button */
+.cancelBtn {display:none !important;}
+
+/* hide Refresh button */
+.refreshBtn {display:none !important;}
+
+/* hide Filter button */
+.launchUDF {display:none !important;}
+
+/* hide Related records within 'More' button */
+.relatedRecordsItem {display:none !important;}
+
+/* hide Metadata Panel icon - 'i' button on the right side of the grid */
+.metadataPanelIcon{display:none !important;}
+
+/* Make the lookup results wider and taller */
+.ui-autocomplete.overflowX {
+    width:890px !important; 
+    max-width:890px !important;
+}
+
+/* Make look up results taller */
+.ui-autocomplete-scrollable {
+    max-height:165px;
+}
+
+/* Hide Undo icon, introduce in 5.4 release */
+.icon-undo{display:none !important;}
+
+/*  Override Tooltipster styles to hide Help Text tooltips  */
+.tooltipster-default {
+	border: none;
+	background: transparent;
+	color: transparent;	
+	-moz-box-shadow: none; 
+	-webkit-box-shadow: none; 
+	box-shadow: none; 
+	filter:progid:DXImageTransform.Microsoft.Shadow(color='transparent', Direction=135, Strength=2);	
+}
