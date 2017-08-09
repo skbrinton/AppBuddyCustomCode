@@ -1,0 +1,45 @@
+/***************
+
+Custom code to save some real esate when 3rd level is brought on the grids.
+It hides few buttons , reduces the whitespace, hides Grid Name and parent object name etc.
+
+***************/
+
+.gbCopyright{
+    display:none;
+}
+
+#gridFooter{
+    display: none;
+}
+
+.leafTitle .toggleCtrl{
+    visibility: hidden;
+    margin-right: 0px !important;
+}
+
+.gridBtns.top, .gridBtns.bottom{
+    display: none; /* comment out if filtering with fpf/fpv */
+}
+
+.gridBtns .recordCnt{
+    margin: 2px 5px 2px 4px;
+}
+.gridBtns .gridTitle{
+    display: none;
+}
+
+.gridBtns .headerSeparator{
+    display: none;
+}
+
+.gridBtns.top .gridBtnsCell{
+    display: none;
+}
+
+.gridBtns.top h2.parentName{
+    font-family: "Salesforce Sans", Arial, sans-serif;
+    font-size: 12px;
+    color: #222;
+    font-weight: bold;
+}
