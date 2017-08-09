@@ -1,0 +1,9 @@
+<aura:component implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global" >
+<aura:attribute name="vfHost" type="String"/>
+<aura:attribute name="gridName" type="String" default="Opportunities with Tasks"/>
+    
+<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+<iframe aura:id="gridFrame" scrolling="auto" height="750" width="100%" frameborder="0"
+        src="{!v.vfHost + '/apex/gblite__Grid?gname=' + v.gridName + '&amp;sh=0&amp;ssb=0'}" />	
+</aura:component>
