@@ -1,0 +1,20 @@
+/*
+ * CSS changes for grids to work better in Salesforce1
+ * Recommend using data card to show additional fields
+ * Use 'desktopView' URL param to control mobile-optimized or standard view
+*/ 
+
+/* hide grid title*/
+.gridHeaderCell {display:none !important;}
+
+/* Hide Read Only button */
+.cancelBtn {display:none !important;}
+
+/* Hide More button */
+.pageActionsBtn {display:none !important;}
+
+/* Hide copyright last line */
+.gbCopyright {display:none !important;}
+
+/* Hide filter button in Desktop view */
+.launchUDF {display:none !important;}
