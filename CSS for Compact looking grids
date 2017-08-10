@@ -1,0 +1,98 @@
+/* CSS changes to make grids more compact */
+
+table.mainTable td, 
+table.mainTable td input,
+table.mainTable td select,
+table.mainTable td .recordCnt,
+.recordCntRange, 
+.pageSizeOpts,
+.pagination, 
+.pagination input,
+.totalPages,
+.pageSizeOpts,
+.pageSizeOpts select,
+.gbForm .gbff {
+    font-size: 0.9em !important;
+}
+
+table.mainTable > tbody > tr:not(.firstHeader) > td, 
+table.childTable > tbody > tr:not(.childHeaderRow) > td {
+    vertical-align: middle;
+}
+
+.cr .crDataContainer.firstChildGrid .branch {
+    padding-top: 4px !important; 
+}
+
+.childData .childDataContainer {
+    padding-top: 2px !important;    
+}
+
+table.mainTable td {
+    padding: 2px !important;
+}
+
+.headerSeparator, 
+.parentName,
+.gbCopyright {
+    display: none;
+}
+div.msgBox.infoMsg {
+	display: none;
+}
+
+.compactView .mainTable .dr td textarea {
+    height: 12px;
+    min-height: 12px;
+}
+
+input.gbd.hasDatepicker, input.gbd {
+    width: 60px !important;
+}
+
+.gbForm table.mainTable td,
+.gbForm table.mainTable td input,
+.gbForm table.mainTable td select,
+.gbForm table.mainTable td .recordCnt,
+.gbForm .recordCntRange,
+.gbForm .pageSizeOpts,
+.gbForm .pagination,
+.gbForm .pagination input,
+.gbForm .totalPages,
+.gbForm .pageSizeOpts,
+.gbForm .pageSizeOpts select,
+.gbForm .gbff {
+    font-size: 1em !important;
+}
+
+.gbForm table.mainTable td,
+.gbForm table.mainTable td input,
+.gbForm table.mainTable td select,
+.gbForm table.mainTable td .recordCnt,
+.gbForm .recordCntRange,
+.gbForm .pageSizeOpts,
+.gbForm .pagination,
+.gbForm .pagination input,
+.gbForm .totalPages,
+.gbForm .pageSizeOpts,
+.gbForm .pageSizeOpts select,
+.gbForm .gbff {
+    font-size: 1em !important;
+}
+
+.mainTable input.txt,
+.mainTable input.gbd,
+.mainTable input.rf,
+.mainTable select,
+.mainTable textarea {
+    margin:  0px !important;
+    padding:  0px !important;
+}
+
+body {
+    font-size: 62%;
+}
+
+input.cancelBtn.gbBtn {
+    display: none;
+}
