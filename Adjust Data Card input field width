@@ -1,0 +1,7 @@
+.mainTable .dr td .cardItem .cardCell textarea {
+    width: 800px;
+}
+
+#gbMainTable .dataCard .cardItem input{
+    width: 200px;
+}
