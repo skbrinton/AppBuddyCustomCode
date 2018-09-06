@@ -1,0 +1,92 @@
+/**
+* Default the following task fields:
+*   ActivityDate: getCurrentDateFormatted(),
+*   OwnerId: userId,
+*   Priority: 'Normal',
+*   Status: 'Completed'
+**/
+jq(function() {
+  defaultTheNameField();
+
+  function defaultTheNameField() {
+    // object api name to map of field api name to default value; this will also set the default field value in the Mass Update widget
+    var fieldsToDefault = {
+      Task: {
+        ActivityDate: getCurrentDateFormatted(),
+        OwnerId: userId,
+        Priority: 'Normal',
+        Status: 'Completed'
+      }
+    };
+
+    ///// DON'T CHANGE ANYTHING BELOW THIS LINE /////
+
+    // the grid and meta column info be used to default the fields within the Mass Update widget
+    var metaColsAndValues = [];
+
+    for (var gridInfoKey in gridInfoMap) {
+      var gridInfoObj = gridInfoMap[gridInfoKey];
+
+      if (fieldsToDefault[gridInfoObj.gridApiName]) {
+        var fieldsWithDefaultValues = fieldsToDefault[gridInfoObj.gridApiName],
+          thisCol;
+
+        // loop through the meta cols now and set the default for the specified fields
+        for (var i = 0; i < gridInfoObj.metaColumns.length; i++) {
+          thisCol = gridInfoObj.metaColumns[i];
+
+          if (fieldsWithDefaultValues[thisCol.fieldName]) {
+            var defaultValue = fieldsWithDefaultValues[thisCol.fieldName];
+            setDefaultValueForField(thisCol, gridInfoObj, defaultValue);
+
+            // add field to Mass Update defaulted field list
+            metaColsAndValues.push({
+              gridInfo: gridInfoObj,
+              metaCol: thisCol,
+              value: defaultValue
+            });
+          }
+        }
+      }
+    }
+
+    // set the default values within the Mass Update widget
+    jq("input.massUpdates").click(function() {
+      // needed the timeout to capture the updated DOM
+      setTimeout(function() {
+        jq.each(metaColsAndValues, function(i, info) {
+          var massUpdateTable = jq('#massUpdatesTable table[name="' + info.gridInfo.objId + '"]');
+          if (massUpdateTable.length > 0) {
+            massUpdateTable
+              .find('td[name="' + info.metaCol.fieldId + '"] :input')
+              .val(info.value)
+              .change();
+
+            // revert the dependent picklists that got marked as edited as a result of defaulting the OppType controlling field
+            massUpdateTable
+              .find("td.mu:visible")
+              .find("div.spanLink")
+              .click();
+          }
+        });
+      }, 0);
+    });
+  }
+
+  function setDefaultValueForField(pMetaCol, pGridInfo, defaultValue) {
+    // get the name of the table we're in
+    var defaultValueTable = jq('table[name="new_' + pGridInfo.gridId + '"]');
+    if (defaultValueTable.length > 0) {
+      // get the column with the matching name
+      var defaultCol = defaultValueTable.find('td[name="' + pMetaCol.fieldId + '"]');
+
+      if (pMetaCol.showTextInput()) {
+        // for text inputs
+        defaultCol.find('input[type="text"]').val(defaultValue);
+      } else if (pMetaCol.isTypePicklist()) {
+        // for picklists
+        defaultCol.find("select option:selected").val(defaultValue);
+      }
+    }
+  }
+});
