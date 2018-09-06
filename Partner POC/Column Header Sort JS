@@ -1,0 +1,75 @@
+/*
+* Column Header Sort - JS. This feature has 2 files. Please apply the CSS file to the grid too
+* This code sorts a grid column onclick of the column header. Shortcut for the sort option under the field cogg.
+*/
+
+jq(function() {
+  ColumnHeaderSorting.setColumnHeaderOnClick();
+});
+
+var ColumnHeaderSorting = (function(window, document, jq) {
+
+  function setColumnHeaderOnClick() {
+    // the "s" class indicates "sortable"
+    jq(mainTableJqueryId).on('click', 'tr.gradientHeader td, tr.childHeaderRow td', function (e) {
+      if (jq(e.target).hasClass('gbff')) {
+        return;
+      }
+
+      var thisCol = jq(this),
+        cellName = thisCol.attr('name'),
+        gridInfo = getGridInfo(thisCol),
+        metaCol = getMetaColByCellName(cellName, gridInfo),
+        objDotField = gridInfo.gridApiName + '.' + metaCol.fieldName,
+        isDefaultSortField = (gridInfo.defaultSortFields.length == 1 && gridInfo.defaultSortFields[0] == metaCol.fieldName.toLowerCase()),
+        multiSortFields = (gridInfo.sortFields.length > 1),
+        newSortVal;
+
+      if (multiSortFields == true && !gridInfo.getHasGroupByFields()) {
+        // grid is currently sorted by multiple fields, which may include this one
+        // resort the grid by this column only in ascending order
+        // e.g. if Account grid is sorted by Name ASC and Created Date DESC and user clicks the Name field, sort the grid ONLY by the Name field ASC
+        // this will allow the user to then sort by the Name field DESC
+        // if there are group by fields for this grid we don't do this defaulting to ASC,
+        // we change the sort direction
+
+        // sort ascending by this field
+        newSortVal = objDotField + '-1';
+
+      } else {
+        // grid is currently sorted by 1 field 
+        if (thisCol.find('span.sortasc').length > 0) {
+          // current sort dir is ascending, set it to descending
+          newSortVal = objDotField + '-0';
+
+        } else if (thisCol.find('span.sortdesc').length > 0 && isDefaultSortField == false) {
+          // current sort dir is descending and this is not the default sort field
+          if (gridInfo.getHasGroupByFields() && jq.inArray(metaCol.fieldName, gridInfo.groupByFields) > 1) {
+            // user clicked the column of a group by field, set to ascending
+            // group by fields are always sorted asc or desc, they are never set to the default sort (none)
+            newSortVal = objDotField + '-1';
+          } else {
+            // set to default	
+            newSortVal = '';
+          }
+
+        } else {
+          // no sort, or default sort field is sorted descending, set to ascending
+          newSortVal = objDotField + '-1';
+        }
+      }
+
+      // track Sort on the column header
+      GBMixpanel.track('Change Data Set', {
+        'Data Control': 'Sort',
+        'Source': 'Header'
+      });
+
+      GBSortHelper.doSort(gridInfo, newSortVal);
+    });
+  }
+  
+  return {
+    setColumnHeaderOnClick: setColumnHeaderOnClick
+  }
+})(window, document, jq); // end ColumnHeaderSorting
