@@ -1,0 +1,14 @@
+/*  LOCAL FILE - DEFAULT 'RECORD TYPE' FIELD VALUE ON A GRID (EMBEDDED/STANDALONE) 
+  * Copyright © 2010 Primal Cause, Inc. All rights reserved. 
+  * This is one of the 2 cutsom code files the grid needs to have to avail this feature. 
+  * Please make this file type - Javascript and apply this to the grid.
+  * Follow the comments below to update information
+*/
+
+/**
+ * Set the default record type. Please add one more global JS file in order to make thos work
+ * (objectApiName, recordTypeApiName, recordTypeLabel)
+ */
+jq(document).ready(function() {
+	GBDefaultValueHelper.setDefaultRecordTypeForObject('Campaign', 'T4', 'Tier 4 Campaign');
+});
