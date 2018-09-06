@@ -1,0 +1,49 @@
+/**
+ * Copyright © 2018 Primal Cause, Inc. All rights reserved.
+ *
+ * On any object in new rows, this code hides all the picklist values except for desired values.
+ * Ex. Hide all the picklist values from a 'Related To' picklist on a Task Object except 'Account' 'Opportunities' 
+ * The code works for parent or child object grid. 
+ * The scope is limited only to the grids and does not affect  picklist values in Salesforce
+ */
+
+jq(document).ready(function () {
+
+	hideOptions();
+
+    /**
+	 * Hides specified picklist options from new records
+	 */
+	function hideOptions() {
+		///// SPECIFY OBJECTS AND ITS FIELD VALUES TO SHOW BELOW /////
+		var objName = 'Task',
+			fieldName = 'WhatId',
+			fieldsValuesToShow = ['Account', 'Opportunity'];
+
+        ///// DO NOT CHANGE ANYTHING BELOW THIS LINE /////
+        var gridInfo = getGridInfoByApiName(objName);
+        var metaCol = getMetaColByFieldName(gridInfo, fieldName);
+        //this is the first, generic part of the CSS property that all options in the picklist share, the selector for each specific picklist option has to be added later
+        var cssPropString = 'table[name="'+gridInfo.gridId+'"] .dr td[name="'+metaCol.fieldId+'"] select option';
+	    var cssValue = 'display: none;';
+	    var firstStylesheet = document.styleSheets[0];
+	    //the WhatId field is reference type, therefore the picklist options have to be retrieved using the below method
+		var pickListOptions = metaCol.getWhoOrWhatIdLookupObjects()
+
+		for(var i = 0, len = pickListOptions.length; i < len; i++){
+			var option = pickListOptions[i].value;
+			if (jq.inArray(option, fieldsValuesToShow) == -1) {
+				//add the selector that is specific to the current option to the generic selector
+				var cssProperty = cssPropString + '[value="'+option+'"]';
+
+				if (firstStylesheet.addRule) {
+                    // IE
+                    firstStylesheet.addRule(cssProperty, cssValue, 0);
+                } else {
+                    // others
+                    firstStylesheet.insertRule(cssProperty + ' { ' + cssValue + ' }', 0);
+                }
+			}
+		}
+	}
+});
