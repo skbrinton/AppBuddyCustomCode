@@ -1,0 +1,104 @@
+/**
+ * Copyright © 2018 Primal Cause, Inc. All rights reserved.
+ *
+ * If the parent object field is set to certain values, make some fields readonly on the child grid or on the parent grid
+ * If the grid is embedded on a record detail page, fields on child records can also be set to read-only
+ * The comments below explain where to print Controlling and Controlled object and field names
+ */
+
+//the object from where the default values come
+var fromObjName = 'SBQQ__Quote__c';
+
+//the first keys are field api names on the parent object where the value of the field has to be checked to find out if other fields need to be disabled
+//the toObjName refers to the object where the fields need to be disabled (parent or child)
+//the values contain the values that trigger disabling and the array of fields that need to be disabled
+var readonlyFieldMap = {
+  'Docusign_Envelope_Status__c': {
+    'toObjName': 'SBQQ__QuoteLine__c',
+    'values':{
+      'Sent': ['Start_Date__c', 'End_Date__c'],
+      'Completed': ['End_Date__c']
+    }
+  },
+  'ApprovalStatus__c': {
+    'toObjName': 'SBQQ__QuoteLine__c',
+    'values': {
+      'Approved': ['SBQQ__BillingType__c', 'SBQQ__BillingFrequency__c'],
+      'Pending': ['SBQQ__BillingType__c', 'SBQQ__BillingFrequency__c']
+    }
+  },
+  'RecordTypeId': {
+    'toObjName': 'SBQQ__Quote__c',
+    'values': {
+      'Locked': ['Deal_Type__c', 'Deal_Category__c']
+    }
+  }
+};
+
+jq(document).ready(function(){
+
+  var pGridInfo = gridInfoMap.p;
+
+  //loop through grid data
+  for(var parentRow in gridData){
+    var currentRow = gridData[parentRow];
+    for(var pFieldName in readonlyFieldMap){
+      var pFieldMeta = getMetaColByFieldName(pGridInfo, pFieldName);
+      var pColumnName = pFieldMeta.fieldId;
+      var toObjName = readonlyFieldMap[pFieldName].toObjName;
+      var toGridInfo = getGridInfoByApiName(toObjName);
+      var childId = toGridInfo.childRowKey;
+      var values = readonlyFieldMap[pFieldName].values;
+      var readonlyFields = values[currentRow[pColumnName]];
+      if(readonlyFields && readonlyFields.length > 0){
+        //disable cells in child rows
+        if(childId){
+          var childRows = currentRow[childId];
+          for(var childRow in childRows){
+            disableCells(document.getElementById(childRows[childRow].id), toGridInfo)
+          }
+        }
+        //disable cells in parent row
+        else if(fromObjName == toObjName){
+          disableCells(document.getElementById(currentRow.id), toGridInfo);
+        }
+      }
+    }
+  }
+})
+
+function disableCells(row, toGridInfo){
+  if(row){
+    for(var i = 0, len = readonlyFields.length; i < len; i++){
+      var fieldMeta = getMetaColByFieldName(toGridInfo, readonlyFields[i]);
+      var columnName = fieldMeta.fieldId;
+      var cell = jq('[name="'+columnName+'"]', row);
+      if(cell.length > 0){
+        disableCell(cell);
+      }
+    }
+  }
+}
+
+function disableCell(cell){
+  if(jq('input', cell)){
+      jq('input', cell).attr('disabled', 'disabled');
+    }
+    if(jq('textarea', cell)){
+      jq('textarea', cell).attr('disabled', 'disabled');
+    }
+    if(jq('select', cell)){
+      jq('select', cell).attr('disabled', 'disabled');
+    }
+
+    if(cell.hasClass('pl')){
+      cell.css('pointer-events','none');
+    }
+    if(cell.hasClass('flatViewCell')){
+      jq('.spanLink', cell).hide();
+      cell.css('pointer-events','none');
+    }
+    if(jq('.icon-calendar', cell)){
+      jq('.icon-calendar', cell).hide();
+    }
+}
