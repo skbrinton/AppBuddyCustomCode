@@ -1,0 +1,57 @@
+/******************
+3 LEVEL GRID OPTIMIZATION - CHILD CSS. 
+This is one of the 4 custom code files for this functionality(2 on parent and 2 on child grid). 
+Apply this CSS file to CHILD Grid.
+******************/
+
+.gbCopyright{
+    display:none;
+}
+
+#gridFooter{
+    display: none;
+}
+
+#gbMainTableContainer {
+    margin: 10px;
+}
+
+.leafTitle .toggleCtrl{
+    visibility: hidden;
+    margin-right: 0px !important;
+}
+
+.gridBtns.top, .gridBtns.bottom{
+    display: none; /* comment out if filtering with fpf/fpv */
+}
+
+.gridBtns .recordCnt{
+    margin: 2px 5px 2px 4px;
+}
+.gridBtns .gridTitle{
+    display: none;
+}
+
+.gridBtns .headerSeparator{
+    display: none;
+}
+
+.gridBtns.top .gridBtnsCell{
+    display: none;
+}
+
+.gridBtns.top h2.parentName{
+    font-family: 'Salesforce Sans', Arial, sans-serif;
+    font-size: 12px;
+    color: #222;
+    font-weight: bold;
+}
+
+.gradientHeader {
+    background-color:#DBE1E9;
+}
+
+.toggleData.expanded {
+    display: inline-block;
+    margin-top: 8px;
+}
