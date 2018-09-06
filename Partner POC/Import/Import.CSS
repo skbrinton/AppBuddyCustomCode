@@ -1,0 +1,95 @@
+/* IMPORT - 2 files. This is a CSS file. There is JS file too.
+* CSS feature works under some conditions which need to be followed - 
+* Add both CSS and JS files on the Grid.
+* The grid should be a Single Object Grid
+* Code does not support 'Owner' field
+* Create an Excel Sheet with API names of the grid fields
+* You can skip any non-required/ optional fields
+* Custom code will add a 'Import' button on top
+* Click on the Import button and it should launch an import window
+* Copy the excel file data along with the field API names and paste it (ctrl+c, ctrl+v)
+*Save and it should save the imported record on the grid
+*/
+
+#importBox .header {
+  padding: 5px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+#importBox .title {
+  float: left;
+  color: #EFEFEF;
+  font-size: 1.1em
+}
+
+#importBox .closeX {
+  float: right;
+  padding-top: 0;
+  padding-right: 0;
+  color: #EFEFEF;
+  font-weight: normal;
+}
+
+#importBox {
+  background-color: #0088BA;
+}
+
+#importBox #importBtns {
+  background-color: #F5F5F5;
+}
+
+#importBox {
+  width: 660px;
+  display: none;
+  position: absolute;
+  padding: 5px;
+  font-size: 13px;
+}
+
+#importBox #importBody {
+  min-height: 80px;
+  padding: 20px 18px;
+  background-color: white;
+  overflow: auto;
+}
+
+#importBox #importBtns {
+  text-align: center;
+  padding: 12px 20px;
+}
+
+#importBtns .importInfo{
+  text-align: left;
+}
+
+#importBox #importBody, #importBox #importBtns {
+  cursor: default;
+}
+
+#importBox.importBox {
+  cursor: move;
+}
+
+#importBox ul.udc {
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 0;
+}
+
+#importBox ul.udc .udcField {
+  cursor: move;
+}
+
+#importBox .objectSection {
+  margin: 0
+}
+
+#importBox .objectSection .objectLabel {
+  display: inline-block;
+  margin-bottom: 5px;
+}
+
+#importBox {
+  z-index: 6001 !important;
+}
