@@ -1,0 +1,8 @@
+/* JavaScript code to hide parent object name on the field name in the Grid header in Flattened view */
+
+jq(document).ready(function() {
+    jq(".gradientHeader .dvc").each(function() {
+        var parentObjectText = jq(this).text();
+        jq(this).text(parentObjectText.replace("Opportunity Product", "")); 
+    });
+});
