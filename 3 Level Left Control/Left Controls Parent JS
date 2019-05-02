@@ -1,46 +1,34 @@
-/**************************
-Custom JS File to bring in 3 level hierarchy of Objects on the grid, 
-provided there is an inbuilt hierarchy among 2 levels (E.g Opportunity --> Opportunity Products)
-**************************/
+// 3 LEVEL GRID OPTIMIZATION - PARENT JS. This is one of the 4 custom code files for this functionality(2 on parent and 2 on child grid).
+//  Apply this file to Parent Grid.Check comments on line # - 11, 14, 23, 130, 131 and make appropriate changes
 
-var GBDataCardCustom = (function(window, document, jq) {
+var GBThreeLevel = (function(window, document, jq) {
 
-    //Update with URL of child grid
-    var childGridUrl = '3-level products'
+    //*** START CONFIG SETTINGS ***//
 
-    // set how many primary fields there are in each object
-    // the key is the object Id ( p, 1, 2, 3, 4) and the value is the number of primary fields you want to show on load
-    // if grid contains more than 1 child record and you want to append to the 2nd child, update to 2:6 and update line 107 name="c2"
-    var noOfFieldsToShow = {
-        1:6
+    //SET UP TO WORK WITH a SINGLE OBJECT CHILD GRID AS THE THIRD LEVEL
+
+    //Update with Name of third level child grid
+    var childGridUrl = 'TEST Contacts and Tasks';
+
+    //If more than 1 child object in grid, the order of child object on which to configure the third level
+    var orderOfChildObject = 2;
+
+    //Set values as *null* if not in effect - null values will not be added to url string of third level grid
+    var params = {
+        sh: 0,
+        ssb: 0,
+        sbb: 1,
+        otherRandomString: null //any other random string you want to add to the url, for example: "&sfname=admin_whatever20%I%20Want"
     };
+    var fpf = "Opportunity.Id";//important: either use fpf or use id. If you use id, comment out line 130. for fpf comment out line 131
 
-    // set how many fields you want to show in a row in a data card
-    var elementsInARow = 3;
 
-    /**
-    *  DON'T CHANGE ANYTHING BELOW THIS LINE
-    **/
+    var iframeHeight = 240;
 
-    var secondaryFields = {};
+    //*** END CONFIG SETTINGS *** //
+
+
     var numberOfrequiredForCreateFields = {};
-
-    var cssRules = [
-        {ruleName: '#gbMainTable .lastCol .showDataCard .ui-icon', ruleDef: 'background-image: url(images/ui-icons_888888_256x240.png);'},
-        {ruleName: '#gbMainTable .dataCard .cardItem', ruleDef: 'width:' + 100/elementsInARow + '%;'}
-    ];
-
-    var mobileCssRules = [
-        {ruleName: '#gbMainTable .lastCol .showDataCard',ruleDef: 'padding: 4px !important;zoom: 150%;'},
-        {ruleName: '#gbMainTable .dataCard .cardItem',ruleDef: 'padding: 0 !important;'},
-        {ruleName: 'body,html',ruleDef: 'width:100% !important; /* reset SFDC body widths */'},
-        {ruleName: '#gbMainTable',ruleDef: 'width: 99%; margin-left: 1%;'},
-        {ruleName: '#parentHeaderTable',ruleDef: 'margin-left: 1%; margin-top: 10px; margin-bottom: 10px; width: 99%;'},
-        {ruleName: '#gbMainTable .cardItem nobr',ruleDef: 'display:inline-block; vertical-align:middle;'},
-        {ruleName: '#gbMainTable .cardItem input[type="checkbox"]',ruleDef: 'vertical-align:top;'},
-        {ruleName: '#gbMainTable .dataCard .cardItem label',ruleDef: 'width:200px !important; padding-left:3px; padding-bottom: 4px; display:block !important;'},
-        {ruleName: '#gbMainTable .dataCard .cardTable',ruleDef: 'margin-bottom: 20px !important;'}
-    ];
 
     // count editable cols, we need to account for these on the parent when we expand the data card
     var noOfEditableRelCols = 0;
@@ -54,8 +42,6 @@ var GBDataCardCustom = (function(window, document, jq) {
     }
 
     function init() {
-        var headerClass = '',
-            sectionSelector = '';
 
         // register Save All and Refresh All click events
         jq('.saveBtn, .saveReturnBtn').click(function() {
@@ -69,70 +55,35 @@ var GBDataCardCustom = (function(window, document, jq) {
                 jq(this)[0].contentWindow.postMessage(JSON.stringify(returnObject), window.location.origin);
             });
         });
+    console.log('childobject')
+        // append expandable icons to the child object that needs to be expanded
+        jq('.childTable[name="c'+orderOfChildObject+'"] .dr .chk').prepend('<span class="showDataCard"><span class="icon-arrow toggleCtrl"></span></span>');
 
-        for(var k in gridInfoMap){
-            for (var i=noOfFieldsToShow[k]; i < gridInfoMap[k].metaColumns.length; i++) {
-                if(secondaryFields[k] == undefined){
-                    secondaryFields[k] = [];
-                }
-                // don't add fields that are required on create. they should show up in the top col
-                if(gridInfoMap[k].metaColumns[i].requiredForCreate == false){
-                    secondaryFields[k].push(gridInfoMap[k].metaColumns[i].fieldId);
-                }else{
-                    if(numberOfrequiredForCreateFields[k] == undefined){
-                        numberOfrequiredForCreateFields[k] = 1;
-                    }else{
-                        numberOfrequiredForCreateFields[k] ++;
-                    }
-                }
-            }
-
-            // hide secondary fields
-            if(secondaryFields[k] != undefined){
-                for (var j=0; j<secondaryFields[k].length; j++) {
-                    if(k == 'p'){
-                        headerClass = '.gradientHeader';
-                        sectionSelector = mainTableJqueryId + ' > tbody >';
-                    }else{
-                        headerClass = '.childHeaderRow';
-                        sectionSelector = '.childTable[name="c' + k + '"]';
-                    }
-
-                    jq(headerClass + ' td[name="' + secondaryFields[k][j] + '"]').remove(); // remove column headers to avoid them being copied to frozen header
-                    jq(sectionSelector + ' .summaryRow td[name="' + secondaryFields[k][j] + '"]').remove(); // remove summary cells
-                    jq(sectionSelector + ' .groupByRow td[name="' + secondaryFields[k][j] + '"]').remove(); // remove group by cells
-                    //jq(sectionSelector + ' tr.dr td[name="' + secondaryFields[k][j] + '"]').hide();
-                    cssRules.push({ruleName: sectionSelector + ' tr td[name="' + secondaryFields[k][j] + '"]',ruleDef: 'display: none;'});
-
-                }
-            }
-        }
-
-        // only append expandable icons to the first child object
-        jq('.childTable[name="c1"] .dr .chk.ui-selectee').prepend('<span class="showDataCard"><span class="ui-icon ui-icon-plusthick"></span></span>');
-        
         jq(mainTableJqueryId).on('click', '.showDataCard', showDataCard);
-
-        setupEvents(secondaryFields);
-        addRulesToStyleSheet(cssRules);
-        if(isInMobileView){
-            addRulesToStyleSheet(mobileCssRules);
-        }
 
     }
 
+    function getNoOfFields(gridInfo){
+        var metaCols = gridInfo.metaColumns;
+        var n = 0;
+        for(var i=0; i<metaCols.length; i++){
+            if(metaCols[i].renderByDefault())  n++;
+        }
+        return n;
+    }
+
     function showDataCard(){
-        var button = jq(this).find('.ui-icon'),
+        var button = jq(this).find('.icon-arrow'),
             thisRow = button.closest('tr'),
             dataCard = thisRow.next('.dataCard'),
             isInitialized = dataCard.length != 0,
             dataCardHtml,
-            newDataCard,
             rowClasses = thisRow[0].className,
             gridInfo = getGridInfo(button),
             isNewRow = thisRow.hasClass('nr'),
-            colspan = noOfFieldsToShow[gridInfo.gridId] + 2;
+            colspan = getNoOfFields(gridInfo) + 2;
 
+        //TODO: check if this works good
         if(isNewRow && numberOfrequiredForCreateFields[gridInfo.gridId] != undefined){
             // when it's a new row, we have to account for the not configured required fields
             colspan += numberOfrequiredForCreateFields[gridInfo.gridId];
@@ -145,23 +96,13 @@ var GBDataCardCustom = (function(window, document, jq) {
         button.toggleClass('expanded');
 
         if(button.hasClass('expanded')){
-            // button.removeClass('expanded').addClass('collapsed');
-            button.addClass('ui-icon-minusthick').removeClass('ui-icon-plusthick');
-            thisRow.addClass('dataCardExpanded');
             dataCard.addClass('dataCardExpanded');
 
             // expand
             if(!isInitialized){
                 // init and insert row
-                dataCardHtml = getDataCardHtml(thisRow, gridInfo);
+                dataCardHtml = getDataCardHtml(thisRow);
                 thisRow.after('<tr id="'+thisRow.attr('id')+'" class="' + rowClasses + ' dataCard dataCardExpanded"><td class="dataCardCell" colspan="'+ colspan +'">'+dataCardHtml+'</td></tr>')
-                newDataCard = jq('#'+thisRow.attr('id')+'.dataCard');
-                addAutocompleteToLookupFields(newDataCard, false);
-                initTextAreas(newDataCard);
-                initPicklists(newDataCard);
-                newDataCard.addClass('highlightRow');
-
-                newDataCard.find('input, textarea').css('width', ''); // remove enforced width from draggable resize columns
             }else{
                 // already initialized, just show row
                 dataCard.show();
@@ -169,63 +110,30 @@ var GBDataCardCustom = (function(window, document, jq) {
 
             correctColspan(thisRow.closest('tbody'), gridInfo.gridId);
 
-            GBMixpanel.track('Show Data Card', {
+            GBMixpanel.track('Show Three Level Grid', {
                 'Source': 'Button'
             });
 
         }else{
-            // button.addClass('expanded').removeClass('collapsed');
-            button.addClass('ui-icon-plusthick').removeClass('ui-icon-minusthick');
-            thisRow.removeClass('dataCardExpanded');
             dataCard.removeClass('dataCardExpanded');
-            // collapse
             dataCard.hide();
         }
     }
 
-    function getDataCardHtml(row, gridInfo){
+    function getDataCardHtml(row){
         var recordId = row.attr('id');
-        return '<iframe class="gridFrame" scrolling="auto" height="240" width="100%" frameborder="0" src="'+window.location.origin+'/apex/Grid?gname='+childGridUrl+'&id='+recordId+'&sh=0&ssb=0&sbb=1"></iframe>'
-
-
-        var htmlArr = ['<div class="cardTable">'],
-            cell,
-            field;
-
-        for (var i=0; i<secondaryFields[gridInfo.gridId].length; i++) {
-            field = secondaryFields[gridInfo.gridId][i];
-            cell = row.find('td[name="'+field+'"]');
-
-            if(cell.length == 0){
-                continue;
+        var paramStr = "";
+        for(var i in params) {
+            if (params[i] != null) {
+                paramStr += "&" + i + "=" + params[i];
             }
-
-            if(i%elementsInARow == 0){
-                htmlArr.push('<div class="cardRow">'); // start cardRow div
-            }
-
-            htmlArr.push('<div class="cardItem ' + cell[0].className + '" name="'+field+'">');
-            htmlArr.push('<label>' + gridInfoMap[gridInfo.gridId].getMetaColByFieldId(field).fieldLabel + '</label>');
-            htmlArr.push(cell.html());
-            htmlArr.push('</div>');
-
-            if(i%elementsInARow == elementsInARow-1 || i == secondaryFields[gridInfo.gridId].length-1){
-                htmlArr.push('</div>'); // close cardRow div after every 5th card or at the end
-            }
-
         }
 
-        htmlArr.push('</div>'); // close cardTable
+        //IMPORTANT: use either one of the following lines, not both
+        //paramStr += "&fpf=" + fpf + "&fpv=" + recordId; //filter by fpf
+        paramStr = "&id=" + recordId + paramStr; //filter by recordId
 
-        return htmlArr.join('');
-    }
-
-    function setupEvents(){
-
-        jq(mainTableJqueryId).on('change', 'input.rtf', function(e) {
-            GBRowHelper.updateRecordTypePicklists(jq(this).closest('td'), false);
-        });
-
+        return '<iframe class="gridFrame" scrolling="auto" height="'+iframeHeight+'" width="100%" frameborder="0" src="'+window.location.origin+'/apex/Grid?sfname=default&gname='+childGridUrl+paramStr+'"></iframe>'
     }
 
     function handleNewRow(newRow){
@@ -243,7 +151,7 @@ var GBDataCardCustom = (function(window, document, jq) {
         correctColspan(newRow.closest('tbody'), id);
 
         // prepend expand button
-        newRow.find('.dr .chk.ui-selectee').prepend('<span class="showDataCard"><span class="ui-icon ui-icon-plusthick"></span></span>');
+        newRow.find('.dr .chk.ui-selectee').prepend('<span class="showDataCard"><span class="icon-arrow"></span></span>');
     }
 
     // make sure dataCard colspans are still accurate due to not configured required fields
@@ -259,485 +167,179 @@ var GBDataCardCustom = (function(window, document, jq) {
         }
     }
 
-    function initTextAreas(dataCard){
-        var originalRow = dataCard.prev('.dr');
-
-        // we have to copy the values from the textareas in the dataCard to their hidden counterparts. This is because they're saved in a specific way
-        jq(mainTableJqueryId).on('blur', '#'+dataCard.attr('id')+'.dataCard textarea', function(e) {
-            originalRow.find('td[name="'+jq(this).closest('.cardItem').attr('name')+'"] textarea').val(jq(this).val());
-        });
-
-    }
-
-    function initPicklists(dataCard){
-        dataCard.find('.cardItem.pl').each(function(item){
-            setupPicklistBehavior(null, jq(this), false);
-        });
-    }
-
     return {
         init: init,
         handleNewRow: handleNewRow
     }
 
-})(window, document, jq); // end GBDataCardCustom
+})(window, document, jq); // end GBThreeLevel
 
-jq(document).ready(function() {GBDataCardCustom.init()});
-
-
+jq(document).ready(function() {GBThreeLevel.init()});
 
 
+//*** OVERRIDE ***//
 
+//override only to remove No changes alert
+function beforeFormSubmit() {
+    //cout('before submit, btnClick: '+btnClick);
 
-    
+    var unbindAllFormFields = true;
 
-/**
-**  OVERRIDES
-**/
+    if (btnClick == 'default') {
+        if (stayOnPageForUnsavedChanges(true, false) == true) {
+            return false;
+        }
+        showProcessingMsg(lang.loading);
 
-// override getMetaCol function to accommodate data cards
-function getMetaCol(pJqueryElem, pGridInfo) {
-    var cellName = pJqueryElem.parents('td').attr('name');
-    if(cellName == undefined){
-        cellName = pJqueryElem.closest('.cardItem').attr('name');
-    }
-    var metaCol = getMetaColByCellName(cellName, pGridInfo);
-    return metaCol;
-}
+    } else if (btnClick == 'save') {
+        if (GBHelpers.isIE()) {
+            // IE has issues with the first input field, especially if it's the first required input in a new row
+            // the onchange doesn't register in this case, which could leave a required field still looking required even though the user entered a value
+            // so find all the fields marked as required and invalid, and call the onchange programmatically
 
-// override updateModifiedDataMap function to accommodate data cards
-function updateModifiedDataMap(pJqueryElem, pGridInfo) {
-    // the value of this element changed
-    // get the element's row id and put it in the modified map
-    var dataRow = pJqueryElem.parents('tr'),
-        rowId = dataRow.attr('id'),
-        isNewData = dataRow.hasClass('nr'),
-        dataMap = (isNewData ? newData : modData),
-        rowData = dataMap[rowId],
-        metaCol = getMetaCol(pJqueryElem, pGridInfo),
-        cellId = metaCol.fieldId,
-        inputVal;
+            var invalidFields = jq(mainTableJqueryId + ' .gbrq'),
+              firstInput;
 
-    // only proceed if rowData is empty or has exaclty one property: 'cl'. This happens when cloning a record
-    if (rowData == null || (Object.keys(rowData).length == 1 && rowData.cl)) {
-        dataMap[rowId] = dataMap[rowId] ? dataMap[rowId] : new Object();
-        rowData = dataMap[rowId];
-        // set the object name
-        rowData['nm'] = pGridInfo.fullyQualifiedObjectName;
+            invalidFields.change();
 
-        if (isNewData) {
-            newDataSize++;
+            // additionally find the first field in the new rows and call the onchange on them for the same reason
+            jq(mainTableJqueryId + ' tr.nr').each(function() {
+                firstInput = jq(this).find('input,select:not(.wId),textarea').first();
+                if (firstInput.length == 1) {
+                    firstInput.change();
+                }
+            });
+        }
 
-            if (pGridInfo.objId != 'p') {
-                // this is a child row, get the parent row's id
-                var childContainerRow = dataRow.parents('tr.cr'),
-                // looking for parent row which is a row adjacent to the child container row
-                    prevRow = childContainerRow.prev(),
-                    parentRowId;
+        var invalidFieldsProcessed = processNextRequiredField();
+        if (invalidFieldsProcessed) {
+            // there are invalid fields, stop
+            return false;
+        }
 
-                if (childContainerRow.length == 1) {
-                    var ctr = 0;
+        var invalidOppProdFieldsProcessed = GBRowHelper.processOppProdFields();
+        if (invalidOppProdFieldsProcessed) {
+            // there are Opportunity Product fields, stop
+            return false;
+        }
 
-                    // FIXME use the row name to find the parent
-                    while (prevRow.hasClass('cr')) {
-                        prevRow = prevRow.prev();
-                        ctr++;
+        // no invalid fields, proceed
+        GBMixpanel.onGridSave.track();
 
-                        // safety exit
-                        if (ctr > 4) {
-                            break;
+        try {
+            var modifiedData = getModifiedData(),
+              newDataStr = getNewData(),
+              modifiedDataExists = (jq.trim(modifiedData).length > 0),
+              newDataExists = (jq.trim(newDataStr).length > 0);
+
+            //alert('modifiedDataExists: '+modifiedData);
+
+            if (modifiedDataExists==false && newDataExists==false) {
+                return false;
+            }
+
+            if (modifiedDataExists==true) {
+                jq(modDataHidden).val(modifiedData);
+            }
+
+            if (newDataExists==true) {
+                jq(newDataHidden).val(newDataStr);
+            }
+
+        } catch(e) {
+            //alert('error: '+e);
+        }
+
+        showProcessingMsg(lang.saving);
+        // only unbind form fields which are in rows that have no modified fields
+        unbindAllFormFields = false;
+
+    } else if (btnClick == 'delete') {
+        try {
+            if (confirm(lang.delWarn)){
+                var processedRecordsForDelete = processRecordsMarkedForDelete();
+                if (!processedRecordsForDelete) {
+                    if (objectsWithNoDeletePerms.length > 0) {
+                        var undeleteableObjectsMsg = new String(lang.noDelPerm);
+
+                        if (objectsWithNoDeletePerms.length == 1) {
+                            undeleteableObjectsMsg += ': ' + objectsWithNoDeletePerms[0];
+                            undeleteableObjectsMsg += lang.deselectRec;
+                        } else {
+                            undeleteableObjectsMsg += 's: ' + objectsWithNoDeletePerms.join(', ');
+                            undeleteableObjectsMsg += lang.deselectRecMulti;
                         }
+
+                        alert(undeleteableObjectsMsg);
+
+                    } else {
+                        alert(lang.noRecForDel);
                     }
-
-                    if (prevRow.hasClass('dr')) {
-                        parentRowId = prevRow.attr('id');
-                        if (GBUnrelated.isChildUnrelated(pGridInfo)) {
-                            parentRowId = GBUnrelated.getParentIdentifierForChildData(pGridInfo,
-                                parentRowId,
-                                prevRow);
-                        }
-                        rowData['pId'] = parentRowId;
-                    }
-                }else{
-                    parentRowId = dataRow.closest('#relatedColumnWidget').attr('data-parent-id');
-                    rowData['pId'] = parentRowId;
+                    return false;
                 }
+            } else {
+                return false;
             }
-        } else {
-            modDataSize++;
-        }
-    }
+        } catch(e) {}
 
-    if (pGridInfo.objId == 'p' && GBUnrelated.fieldIsCrossRefForeignKey(metaCol.fieldName)) {
-        // the field updated is for the parent object, and it is a cross ref FK field
-        GBUnrelated.updateUnrelatedChildData(dataRow, metaCol.fieldName);
-    }
+        showProcessingMsg(lang.deleting);
 
-    if (pJqueryElem.is(':checkbox')) {
-        // make sure boolean is in string format for json object
-        inputVal = (pJqueryElem.is(':checked') == true)+"";
-
-    } else {
-        // scrub value
-        inputVal = scrubFieldValue(pJqueryElem, pGridInfo, isNewData);
-
-        // if it's a lookup for whoId add the whoId object name to the map
-        if (metaCol.isWhoIdField()) {
-            var whoIdObjectName = pJqueryElem.parents('div.ui-widget').find('select.wId').val();
-            rowData['whoId'] = whoIdObjectName;
-        } else if (metaCol.isWhoOrWhatIdField()) {
-            var whatIdObjectName = pJqueryElem.parents('div.ui-widget').find('select.wId').val();
-            rowData['whatId'] = whatIdObjectName;
-        }
-    }
-
-    if (inputVal == null) {
-        inputVal = '';
-    }
-
-    // for new records only, if there's an empty value it means the user entered a value to begin with and then removed it
-    // instead of setting the value on the sobject to empty, remove it from the map so the default value gets applied on create
-    // ISSUE WITH RECORD TYPE - can't be empty on create, can't remove on edit
-    if (isNewData==true && inputVal == '' && metaCol.defaultedOnCreate==true) {
-        delete rowData[cellId];
-    } else {
-        rowData[cellId] = inputVal;
-    }
-}
-
-function setupHighlightForMouseoverAction() {
-    // highlight a data record (highlighting was removed
-    // from the mass update widget because of an issue in IE9)
-    var rowSelector = mainTableJqueryId+' tr.dr:not(.nd)';
-
-    jq('div.gbPage').on('mouseover', rowSelector, function() {
-        jq('tr[id="' + jq(this).attr('id') + '"]').addClass('highlightRow');
-    });
-
-    jq('div.gbPage').on('mouseleave', rowSelector, function() {
-        jq('tr[id="' + jq(this).attr('id') + '"]').removeClass('highlightRow');
-    });
-}
-
-// remember fields and data the user changed
-function registerValueChange(e, jQueryElem, isMassUpdate, excludePicklistValidation, excludeUnrelatedUpdates, skipFlatView) {
-    var gridInfo = getGridInfo(jQueryElem),
-        metaCol = getMetaCol(jQueryElem, gridInfo),
-        isNewRow = jQueryElem.parents('tr.dr:first').hasClass('nr'),
-        isUnrelatedRow = jQueryElem.closest('tr').hasClass('ur'),
-        dependentInfo = dependentPickListInfo[metaCol.fieldName],
-        isFlatViewUpdate = (jq('#relatedColumnWidget:visible').length > 0) && !skipFlatView;
-
-    // make parameters default
-    excludeUnrelatedUpdates = excludeUnrelatedUpdates || false;
-
-    updateModifiedDataMap(jQueryElem, gridInfo);
-    validateField(jQueryElem, gridInfo, isNewRow);
-
-    if (isNewRow==false) {
-        var dataCell = jQueryElem.parents('td:first');
-
-        if(dataCell.hasClass('dataCardCell')){
-            dataCell = jQueryElem.closest('.cardItem');
-        }
-
-        if (dataCell.hasClass('mod')==false) {
-            dataCell.addClass('mod');
-        }
-    }
-
-    //on mass update don't override the values that were selected in the mass update widget
-    if(dependentInfo && (!isMassUpdate || (isMassUpdate && jQueryElem.val() == ""))){
-        updateDependentPickLists(jQueryElem, dependentInfo, metaCol, gridInfo);
-    }
-
-    // validate after the dependent field logic in case any of the dependent fields are required
-    validateRemainingRequiredRowFields(jQueryElem, gridInfo, isNewRow, excludePicklistValidation);
-
-    // if child record is unrelated, update all duplicates
-    if (isUnrelatedRow && !excludeUnrelatedUpdates) {
-        GBRowHelper.updateRecords(e, jQueryElem, gridInfo, metaCol, true);
-    }
-
-    // if the flat view related records widget is open, update between the widget and the related section
-    if(isFlatViewUpdate){
-        GBRowHelper.updateRecords(e, jQueryElem, gridInfo, metaCol, false);
-    }
-
-    // update the summary value if this field has one
-    if (metaCol.summaryType && metaCol.summaryType != '') {
-        GBSummary.updateSummaryValue(jQueryElem);
-    }
-
-    // update chart
-    if (GBHelpers.isChartValid()) {
-        GBCharts.gridChart.updateChart(modData, newData);
-    }
-
-    // update the color code
-    GBColorCode.updateColor(jQueryElem, metaCol, gridInfo);
-
-}
-
-/**
- * Adds the given css rules to the gb-jq style sheet.
- * @param pNewRules an array of objects, example:
- *        [{ruleName: 'table.mainTable > tbody > tr > td[name="v3"]',
- *          ruleDef: 'min-width: 750px;'},
- *         {ruleName: 'table.mainTable > tbody > tr > td[name="v3"] input',
- *          ruleDef: 'width: 740px;'},
- *         {ruleName: 'table.childTable[name="c2"] tr td[name="v4"] textarea',
- *          ruleDef: 'width: 590px;'},
- *         ...]
- */
-function addRulesToStyleSheet(pNewRules) {
-    var gbStyleSheet,
-        ruleName,
-        ruleDef;
-
-    for (var y=0; y < document.styleSheets.length; y++) {
-        if (document.styleSheets[y].href && document.styleSheets[y].href.indexOf('gb-jq') > 0) {
-            gbStyleSheet = document.styleSheets[y];
-            break;
-        }
-    }
-
-    if(!gbStyleSheet){
-        return;
-    }
-
-    // loop through the new rules and add them to the style sheet
-    for (var k=0; k < pNewRules.length; k++) {
-        ruleName = pNewRules[k].ruleName;
-        ruleDef = pNewRules[k].ruleDef;
-
-        if (gbStyleSheet.addRule) {
-            // IE
-            gbStyleSheet.addRule(ruleName, ruleDef, 0);
-        } else {
-            // others
-            gbStyleSheet.insertRule(ruleName+' { '+ruleDef+' }', 0);
-        }
-    }
-}
-
-GBColorCode.updateColor = function(element, metaCol, gridInfo){
-    var colorCodeValue,
-        isColored = false,
-        value,
-        cell = element.closest('.cardItem'),
-        objectDotFieldName = '',
-        fullyQualifiedObjectNameParts = gridInfo.fullyQualifiedObjectName.split(':'),
-        valueProps;
-
-    if(cell.length == 0){
-        cell = element.closest('td');
-    }
-
-    if(fullyQualifiedObjectNameParts.length == 1){
-        objectDotFieldName = gridInfo.fullyQualifiedObjectName + ':' + metaCol.fieldName; // if it's a parent object
-    }else{
-        objectDotFieldName = fullyQualifiedObjectNameParts[0] + ':' + metaCol.fieldName + ':' + fullyQualifiedObjectNameParts[1]; // if it's a related object
-    }
-
-    // find the applicable rules based on the objectDotFieldName
-    // parent field example: "Account:Industry"
-    // related field example: "Opportunity:Amount:AccountId"
-    // unrelated field example: "Opportunity:Amount:unrelated"
-    // junction parent field example: "Asset:Quantity:unrelated-AssetId-Case"
-    var applicableRules = colorCodingRulesJson.filter(function(obj) {
-        if (obj.governingField == objectDotFieldName) {
-            // related object or parent
-            return true;
-        }else if(obj.governingField.split(':').length == 3 && // governing field is syntactically correct
-            obj.governingField.split(':')[2].indexOf('unrelated') != -1 && // last token (relation) of governingField contains "unrelated"
-            objectDotFieldName.split(':')[0].indexOf(obj.governingField.split(':')[0]) != -1 && // first token (object) of objectDotFieldName containts the first token of governingField. If it's truly unrelated, they'll be the same. If it's junction parent, one will just contain part of the other
-            obj.governingField.split(':')[1] == objectDotFieldName.split(':')[1]){ // second token (field) of governingField and objectDotFieldName are the same
-            // unrelated object: last element of governing field should be 'unrelated' and the first and second element of the objectDotFieldnames should match
-            return true;
-        }
-    });
-
-    for (var i = 0; i < applicableRules.length; i++) {
-        // convert color code value from string to something that we can compare
-        colorCodeValue = this.convertValue(applicableRules[i].value, metaCol.colDataType, applicableRules[i].value);
-
-        // update color coding on change
-        //value = (cell.hasClass('pl') && !cell.hasClass('plOn')) ? cell.find('.plTxt').text() : cell.find('input, select').val();
-        valueProps = this.getCleanValue(cell, metaCol.colDataType);
-        value = valueProps['cleanValue'];
-
-        if (!value && metaCol.isNumeric()) {
-            // reset/don't highlight this field, it's numeric but the value is blank
-            // blank numeric values should not be treated like 0 values
-            isColored = false;
-
-        } else {
-            // convert value from string to something that we can compare
-            value = this.convertValue(value, metaCol.colDataType, applicableRules[i].value);
-
-            isColored = this.evaluateValueForColorCode(applicableRules[i].operator, value, colorCodeValue, metaCol.colDataType);
-        }
-
-        this.applyColor(cell, applicableRules[i], isColored);
-    }
-};
-
-function insertNewRow(pDataTable, originalRow) {
-    var htmlArr = [],
-        gridInfo = getGridInfoByName(pDataTable.attr('name')),
-        metaCols = gridInfo.metaColumns,
-        firstDataRow = getFirstDataRow(pDataTable),
-        firstRowId = (firstDataRow==null || firstDataRow.length==0 ? '' : firstDataRow.attr('id')) || '',
-        isParentTable = pDataTable.hasClass('mainTable')==true,
-        headerRow = (isParentTable ? pDataTable.find('tr.gradientHeader') : pDataTable.find('tr.childHeaderRow')),
-        newCellValue = '',
-        metaCol,
-        newRow,
-        cellClass,
-        cellClasses,
-        cellProps,
-        requiredCols = [], // could contain hidden, required columns and/or required for create columns
-        firstDataRowExists = (firstRowId.length == 0 || isNaN(firstRowId)==true);
-
-    // make sure the data table is displayed
-    showGridTable(pDataTable);
-
-    if (firstDataRowExists) {
-        // this is the first new record for this table
-        // add the new required field columns to the header and adjust the columns for the rest of the rows
-
-        if (firstDataRow.hasClass('nd')) {
-            // no data found row
-            firstDataRow.addClass('none');
-        }
-
-        var colHtml = '',
-            newColsAdded = 0;
-
-        // show required columns in new rows only if it's not a clone. if it's a clone, we'll take care of it on the back-end
-        if (!originalRow) {
-            for (var i=0, len=gridInfo.metaColumns.length; i < len; i++) {
-                metaCol = gridInfo.metaColumns[i];
-                if (metaCol.requiredForCreate == true || metaCol.showHiddenColumnOnCreate(gridInfo)) {
-                    // insert the new columns before the last column
-                    headerRow.find('td.lastCol').before('<td class="nc">'+metaCol.fieldLabelForDisplay()+'</td>');
-
-                    // add new column to the summary row if applicable
-                    headerRow.first().next('.summaryRow').find('td.lastCol').before('<td class="nc"></td>');
-
-                    if (isParentTable) {
-                        // add new column to each group by header row
-                        jq('.groupByRow').find('td.lastCol').before('<td class="nc"></td>');
-                    }
-
-                    newColsAdded++;
+    } else if (btnClick == 'deleteAll') {
+        try {
+            if (confirm(lang.delAllWarn)){
+                if (!confirm(lang.delAllWarn2)) {
+                    return false;
                 }
+            } else {
+                return false;
             }
+        } catch(e) {}
+
+        showProcessingMsg(lang.deleting);
+
+    } else if (btnClick == 'edit') {
+
+        GBMixpanel.track('Change Grid Display', {
+            'Display Control': 'Edit',
+            'Option': '',
+            'State': ''
+        });
+
+        showProcessingMsg(lang.loading);
+
+    } else if (btnClick == 'cancel') {
+        if (stayOnPageForUnsavedChanges(false, false) == true) {
+            return false;
         }
-
-        // if there's no select (checkbox) column, add an empty column for the minus button for new records
-        // TODO this check may no longer be necessary, since the checkbox column should always be displayed now, confirm
-        if (headerRow.find('input.selectAllChk').length == 0) {
-            headerRow.find('td:first').before('<td class="minusCol nc">&nbsp;</td>');
-            pDataTable.children('tbody').children('tr.dr').children('td:first-child').before('<td class="nc">&nbsp;</td>');
-            newColsAdded++;
+        showProcessingMsg(lang.loading);
+        // track Read Only
+        GBMixpanel.track('Change Grid Display', {
+            'Display Control': 'Read Only Button',
+            'Option': '',
+            'State': ''
+        });
+    } else if (btnClick == 'refresh') {
+        if (stayOnPageForUnsavedChanges(false, false) == true) {
+            return false;
         }
-
-        // readjust all the data rows in this table
-        if (newColsAdded > 0) {
-            // set the new colspan on the last column based on how many required columns are added for the new row
-            pDataTable.children('tbody').children('tr.dr:not(.nr)').find('td.lastCol').attr('colspan', newColsAdded+1).addClass('bl');
-
-            // readjust the data rows in child tables
-            if (isParentTable) {
-                var allChildObjectSections = jq('td.crDataContainer');
-                if (allChildObjectSections.length > 0) {
-                    var origColspan = allChildObjectSections.first().attr('colspan') * 1;
-                    allChildObjectSections.attr('colspan', origColspan + newColsAdded);
-                }
-            }
+        showProcessingMsg(lang.refreshing);
+    } else if (btnClick == 'rocRevertBtn') {
+        // show processing msg
+        showProcessingMsg(lang.reverting);
+    } else if (btnClick == 'rocSaveBtn') {
+        // run udc validation, if fails return false
+        if (!GBUserDefinedCols.validateUdc()) {
+            return false;
         }
+        showProcessingMsg(lang.saving);
+        GBUserDefinedCols.buildJSONForSave();
     }
 
-    // use the current new row id
-    htmlArr.push('<tr id="'+currentNewRowId+'" name="r'+currentNewRowId+'" class="dr nr">');
+    // unbind any required textarea fields that were not modified
+    // so that salesforce does not validate them and potentially throw an error if there's no value
+    unbindFormFields(unbindAllFormFields);
 
-    // decrement the row id
-    currentNewRowId--;
-
-    // first column is for the delete icon
-    htmlArr.push('<td class="chk firstCol"><span class="minus">&nbsp;</span></td>');
-
-    for (var c=0, len=metaCols.length; c < len; c++) {
-        metaCol = metaCols[c];
-        if (!metaCol.isHidden && !metaCol.requiredForCreate) {
-            _buildRowDataCells(metaCol);
-        } else if (metaCol.showHiddenColumnOnCreate(gridInfo) || (metaCol.requiredForCreate && !originalRow)) {
-            // only require the metaCol if it's not a clone
-            requiredCols.push(metaCol);
-        }
-    }
-
-    // insert an empty cell before the required columns if this is a new parent row and a concatenated view child is on the grid
-    htmlArr.push(GBRowHelper.getConcatenatedViewColDataHtml(gridInfo, null));
-
-    for (var d=0, len=requiredCols.length; d<len; d++) {
-        metaCol = requiredCols[d];
-        _buildRowDataCells(metaCol);
-    }
-
-    function _buildRowDataCells(metaCol) {
-        cellProps = getCellProperties(metaCol, newCellValue, null, gridInfo, false);
-        cellClasses = getCellClassForContent(metaCol, newCellValue, cellProps.readOnly);
-        cellClass = (cellClasses.length > 0 ? 'class="'+cellClasses+'"' : '');
-        htmlArr.push('<td name="'+metaCol.fieldId+'" '+cellClass+'>'+cellProps.cellHtml+'</td>');
-    }
-
-    htmlArr.push(
-        GBRowHelper.getLastColHtml(gridInfo, true)
-        + '</tr>'
-    );
-
-    // insert row
-    if(originalRow){
-        if(originalRow.next('.cr').length > 0){
-            // user is cloning a parent row on a multi-object grid
-            // if the record has one or more child record section as adjecent following siblings,
-            // find the last child section tr and insert the cloned record after it
-            newRow = jq(htmlArr.join('')).insertAfter(originalRow.nextUntil(':not(.cr)').last());
-        }else{
-            // user is cloning a child row or any record on a single object grid
-            newRow = jq(htmlArr.join('')).insertAfter(originalRow);
-        }
-
-    }else{
-        // user is creating a new record
-        newRow = jq(htmlArr.join('')).insertBefore(firstDataRow);
-    }
-
-    // set all the element events
-    setEventsForNewRow(newRow);
-
-    // if this is a parent row show the new child object sections
-    if (isParentTable) {
-        GBActions.addNewRelatedObjects(newRow);
-    }
-
-    /* TODO when mass updates are supported for new records
-     // display the extra required columns for this object
-     toggleRequiredFieldsForCreatesInMassUpdatesWidget(gridInfo, true);
-     */
-
-    if (firstDataRowExists) {
-        // init summary row if applicable when creating the first new row, but only after we added the first data row
-        GBSummary.initSummaryRow();
-    }
-
-    // reinitialize draggable resize columns on the new row if they've been already initialized
-    GBDraggableResizeColumns.reinitOnNewRow();
-
-    GBDataCardCustom.handleNewRow(newRow);
-
-    return newRow; // clone uses the returned newRow object
+    showSubmitInProgress();
+    jq(document.body).css('cursor', 'progress');
+    return true;
 }
